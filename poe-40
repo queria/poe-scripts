@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import socket
 import sys
 import tornado.ioloop
 import tornado.web
@@ -240,16 +241,28 @@ class MainPage(tornado.web.RequestHandler):
                 self.write('- %s -- unused</pre>' % left)
         self.write('<p><br /><br /><a href="./">clean all</a></p>')
         self.write('</body></html>')
+def local_ips():
+    addrList = socket.getaddrinfo(socket.gethostname(), None)
 
+    ipList=[]
+    for item in addrList:
+        # print "Item:", item
+        ip = item[4][0]
+        if ip not in ipList:
+            ipList.append(ip)
+    return ipList
 
 if __name__ == '__main__':
     args = sys.argv[1:]
+    if '--help' in args:
+        print('poe-40 [--help] [--debug] <test|web|NUMBERS>')
     if '--debug' in args:
         args.remove('--debug')
         DEBUG = True
-    if '--test' in args:
+    if 'test' in args:
         test()
-    elif '--web' in args:
+    elif 'web' in args:
+        print('Listening on port 8888 at all ips: %s' % (local_ips()))
         app = tornado.web.Application([
             (r'/', MainPage),
         ])

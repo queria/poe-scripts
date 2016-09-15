@@ -256,6 +256,7 @@ if __name__ == '__main__':
     args = sys.argv[1:]
     if '--help' in args:
         print('poe-40 [--help] [--debug] <test|web|NUMBERS>')
+        sys.exit(0)
     if '--debug' in args:
         args.remove('--debug')
         DEBUG = True

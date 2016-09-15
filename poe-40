@@ -34,9 +34,9 @@ def findit(nums, target):
         if sol_sum >= target:
             debug('%s = %s' % (sum(sol), sol))
             # we have reached the target
-            if (sol_sum < best_sum
-                or (sol_sum == best_sum
-                    and len(sol) < len(best_sol))):
+            if (sol_sum < best_sum or
+                (sol_sum == best_sum and
+                 len(sol) < len(best_sol))):
                 # we have reached the best-yet target
                 best_sol = sol[:]
                 best_sum = sol_sum
@@ -189,6 +189,7 @@ def test():
     else:
         print('All %s tests passed.' % total)
 
+
 def numsWithout(nums, sol):
     nw = nums[:]
     for n in sol:
@@ -199,11 +200,13 @@ def numsWithout(nums, sol):
             raise
     return nw
 
+
 def safeint(num):
     try:
         return int(num)
     except:
         return 0
+
 
 class MainPage(tornado.web.RequestHandler):
     def get(self):
@@ -232,7 +235,8 @@ class MainPage(tornado.web.RequestHandler):
             if not sols:
                 self.write('No solution for numbers %s.' % nums)
             else:
-                self.write('For numbers %s these are the solutions:<pre>' % nums)
+                self.write('For numbers %s these are the solutions:<pre>'
+                           % nums)
                 for sol in sols:
                     self.write('+ %s => %s' % (sol, sum(sol)))
                     self.write(' <a href="?docalc=1&numbers=%s">drop</a>\n\n' %
@@ -241,16 +245,19 @@ class MainPage(tornado.web.RequestHandler):
                 self.write('- %s -- unused</pre>' % left)
         self.write('<p><br /><br /><a href="./">clean all</a></p>')
         self.write('</body></html>')
+
+
 def local_ips():
     addrList = socket.getaddrinfo(socket.gethostname(), None)
 
-    ipList=[]
+    ipList = []
     for item in addrList:
         # print "Item:", item
         ip = item[4][0]
         if ip not in ipList:
             ipList.append(ip)
     return ipList
+
 
 if __name__ == '__main__':
     args = sys.argv[1:]

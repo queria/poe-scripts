@@ -14,6 +14,11 @@ def debug(msg):
         print('\t\t\t %s' % msg)
 
 
+def __help__():
+    print('poe-40 [--help] [--debug] '
+          '<test|web|csv TABPATTERN TYPE CSV-FILE|NUMBERS>')
+
+
 def findit(nums, target):
     nums = sorted(nums)
     debug('total sum of input %s is %s' % (nums, sum(nums)))
@@ -259,10 +264,32 @@ def local_ips():
     return ipList
 
 
+__csv_loc_field = 0
+__csv_type_field = 3
+__csv_qual_field = 7
+
+
+def numbers_from_csv(csv_path, tab_pattern, item_type):
+    print('Searching %s for type=%s in tabs with %s in name...'
+          % (csv_path, item_type, tab_pattern))
+    with open(csv_path) as csv_file:
+        csv_text = csv_file.readlines()
+    qualities = []
+    for line in csv_text:
+        line = line.split(',')
+        if tab_pattern not in line[__csv_loc_field]:
+            continue
+        if item_type != line[__csv_type_field]:
+            continue
+        qualities.append(int(line[__csv_qual_field]))
+
+    return qualities
+
+
 if __name__ == '__main__':
     args = sys.argv[1:]
     if '--help' in args:
-        print('poe-40 [--help] [--debug] <test|web|NUMBERS>')
+        __help__()
         sys.exit(0)
     if '--debug' in args:
         args.remove('--debug')
@@ -276,5 +303,17 @@ if __name__ == '__main__':
         ])
         app.listen(8888)
         tornado.ioloop.IOLoop.current().start()
+    elif 'csv' in args:
+        idx = args.index('csv')
+        try:
+            tab_pattern = args[idx+1]
+            item_type = args[idx+2]
+            csv_path = args[idx+3]
+        except IndexError:
+            __help__()
+            print('')
+            raise
+
+        main(numbers_from_csv(csv_path, tab_pattern, item_type))
     else:
         main(args)
